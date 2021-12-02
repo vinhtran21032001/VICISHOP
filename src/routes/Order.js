@@ -10,6 +10,7 @@ router.post('/', verifyToken, async (req, res)=> {
     const userId = req.user.id;
     const newOrder = Order({
         ...req.body,
+        userID : userId,
     })
     try{
         const savedOrder = await newOrder.save();
@@ -76,7 +77,7 @@ router.get('/stats', verifyTokenAndIsAdmin, async (req,res)=> {
     const prevMonth = new Date(date.setMonth(lastMonth.getMonth() -1));
     try {
         const data  = await Order.aggregate([
-            {$match : {createdAt : {$gte: lastMonth}}},
+            {$match : {createdAt : {$gte: prevMonth}}},
             {
                 $project : {
                     month : { $month: "$createdAt"} ,
